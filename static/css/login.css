@@ -1,0 +1,68 @@
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#F2F3F4; /* light gray */
+    color:#2C3E50; /* teks utama dark gray */
+}
+
+.login-container{
+    text-align:center;
+    margin-top:120px;
+}
+
+h1{
+    color:#1A5276; /* primary blue */
+}
+
+.login-box{
+    width:420px;
+    margin:auto;
+    background:#ffffff; /* light gray */
+    padding:40px;
+    border-radius:10px;
+    border:1px solid #145A86; /* dark primary blue */
+}
+
+.input-group{
+    text-align:left;
+    margin-bottom:20px;
+}
+
+.input-group label{
+    font-weight:bold;
+}
+
+.input-icon {
+    display:flex;
+    align-items:center;
+    background:#E0E0E0; /* sedikit lebih gelap daripada putih */
+    padding:8px;
+    margin-top:5px;
+    border-radius:6px; /* opsional agar lebih modern */
+}
+
+.input-icon i {
+    margin-right:10px;
+    color:#2C3E50; /* dark gray supaya ikon terlihat jelas */
+}
+
+.input-icon input {
+    border:none;
+    outline:none;
+    background:transparent;
+    width:100%;
+    color:#2C3E50; /* teks juga dark gray */
+}
+
+button{
+    margin-top:20px;
+    padding:12px 40px;
+    background:#E67E22; /* accent orange */
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#D9691C; /* darker orange hover */
+}

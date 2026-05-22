@@ -1,0 +1,50 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+
+<h1 class="welcome">Selamat Datang!</h1>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Transaksi</h3>
+<div class="number">{{ total_transaksi }}</div>
+</div>
+
+<div class="card">
+<h3>Total Pendapatan</h3>
+<div class="number">Rp {{ "{:,}".format(total_pendapatan) }}</div>
+</div>
+
+</div>
+
+<div class="chart-box">
+<h3>Pendapatan 7 Hari Terakhir</h3>
+<canvas id="myChart"></canvas>
+
+<script>
+
+
+<script>
+    // reminder_items dikirim dari Flask
+    const reminder_items = {{ reminder_items | tojson }};
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        if (reminder_items.length > 0) {
+            let message = "⚠ Barang Mendekati Expired:\n";
+            reminder_items.forEach(item => {
+                message += `${item.nama} - ${item.expired_date} (${item.periode})\n`;
+            });
+            alert(message);
+        }
+    });
+</script>
+
+<script>
+    window.chartLabels = {{ chart_labels | tojson }};
+    window.chartValues = {{ chart_values | tojson }};
+</script>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,437 @@
+/* ========================= */
+/* POS MODERN CLEAN FINAL */
+/* ========================= */
+
+/* GLOBAL */
+body {
+  background: #F2F3F4; /* sebelumnya #a9b8c3 */
+  font-family: "Segoe UI", sans-serif;
+  color: #2C3E50; /* teks utama dark gray */
+}
+
+/* ========================= */
+/* LAYOUT */
+/* ========================= */
+
+.transaksi-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.transaksi-left {
+  flex: 7;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.transaksi-right {
+  flex: 3;
+  background: #ffffff; /* light gray / putih */
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* ========================= */
+/* SCAN AREA */
+/* ========================= */
+
+.scan-area {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #ffffff; /* light gray */
+  padding: 12px;
+  border-radius: 12px;
+  position: relative;
+}
+
+#scanInput {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  outline: none;
+}
+
+/* tombol */
+.scan-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-scan {
+  background: linear-gradient(135deg, #1A5276, #145A86); /* primary blue */
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.btn-stop {
+  background: linear-gradient(135deg, #E67E22, #D9691C); /* accent orange */
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+/* ========================= */
+/* SUGGESTION */
+/* ========================= */
+
+.suggestion-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #ffffff; /* light gray */
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  z-index: 999;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-item.active {
+  background: #145A86;
+  color: white;
+}
+
+.suggestion-item:hover {
+  background: #145A86; /* primary blue hover */
+  color: white;
+}
+
+/* ========================= */
+/* TABLE */
+/* ========================= */
+
+.table-transaksi {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  margin-top: 15px;
+}
+
+.table-transaksi button {
+  color: white;
+  border: none;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.table-transaksi td:last-child button {
+  background: #ef4444;
+}
+
+.table-transaksi thead th {
+  text-align: left;
+  padding: 10px;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.table-transaksi tbody tr {
+  background: #F2F3F4; /* light gray row */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  border-radius: 10px;
+}
+
+.table-transaksi td {
+  padding: 12px;
+}
+
+.table-transaksi tbody:empty::after {
+  content: "Belum ada barang ditambahkan";
+  display: block;
+  text-align: center;
+  padding: 30px;
+  color: #888;
+}
+
+/* ========================= */
+/* QTY */
+/* ========================= */
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qty-control button {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* ========================= */
+/* PEMBAYARAN */
+/* ========================= */
+
+.total-box {
+  background: linear-gradient(135deg, #1A5276, #145A86); /* primary blue */
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.total-box h2 {
+  font-size: 32px;
+  margin-top: 10px;
+}
+
+.metode {
+  margin-bottom: 10px;
+}
+
+.metode label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 18px;
+  font-size: 16px;
+}
+
+.bayar-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.kembalian {
+  margin-top: 10px;
+}
+
+#kembalian {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.btn-bayar {
+  width: 100%;
+  padding: 15px;
+  background: #E67E22; /* accent orange */
+  color: white;
+  border-radius: 10px;
+  margin-top: 15px;
+  border: none;
+}
+
+/* ========================= */
+/* STRUK (UI) */
+/* ========================= */
+
+.popup-struk {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.struk-box {
+  width: 58mm;
+  max-width: 58mm;
+  background: #ffffff;
+  padding: 6px;
+  box-sizing: border-box;
+  font-family: monospace;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+#strukText {
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre;
+  color: #000;
+}
+
+.struk-header {
+  text-align: center;
+}
+
+.struk-header h2{
+  margin:0;
+  font-size:16px;
+}
+
+.struk-header p{
+  margin:2px 0;
+  font-size:12px;
+}
+
+.struk-info {
+  font-size: 11px;
+}
+
+.struk-summary div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.struk-footer {
+  text-align: center;
+  margin-top: 10px;
+  font-size:12px;
+}
+
+.struk-box * {
+  white-space: nowrap;
+}
+
+.struk-btn {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.struk-info{
+  font-size:12px;
+  margin-top:6px;
+}
+
+.btn-close {
+  background: #27AE60; /* primary green */
+  color: white;
+}
+
+/* ========================= */
+/* BUTTON GLOBAL */
+/* ========================= */
+
+button {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* ========================= */
+/* PRINT THERMAL (FIX TOTAL) */
+/* ========================= */
+
+@page {
+  size: 58mm auto;
+  margin: 0;
+}
+
+@media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 58mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #strukPrint,
+  #strukPrint * {
+    visibility: visible !important;
+  }
+
+  #strukPrint {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 58mm !important;
+    max-width: 58mm !important;
+    padding: 8px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    background: #fff !important;
+    border-radius: 0 !important;
+  }
+
+#strukText {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: monospace !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+  white-space: pre !important;
+}
+
+  .struk-btn {
+    display: none !important;
+  }
+
+}
+
+.toast{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#34495e;
+  color:white;
+  padding:12px 18px;
+  border-radius:8px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.2);
+  font-size:14px;
+  opacity:0;
+  transform:translateY(-10px);
+  transition:0.3s ease;
+  z-index:99999;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.toast.success{
+  background:#27ae60;
+}
+
+.toast.error{
+  background:#e74c3c;
+}
+
+.toast.warning{
+  background:#e67e22;
+}
+
+.stok-info{
+    color: #666;
+    font-size: 13px;
+    margin-left: 6px;
+}

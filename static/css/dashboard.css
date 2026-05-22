@@ -1,0 +1,153 @@
+/* GLOBAL */
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#F2F3F4; /* light gray */
+  color:#2C3E50; /* teks utama dark gray */
+}
+
+/* NAVBAR */
+.navbar{
+  height:60px;
+  background:#1A5276; /* primary blue */
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+}
+
+.nav-left{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.nav-right a{
+  color:white;
+  text-decoration:none;
+  font-size:18px;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width: 240px;
+
+    background: #145A86;
+
+    position: fixed;
+
+    top: 80px;
+    left: 20px;
+
+    min-height: 75vh;
+    border-radius: 20px;
+
+    padding: 24px 16px;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+}
+
+.sidebar .active{
+    background: #2DB55D;
+}
+
+.sidebar ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li{
+    margin-bottom: 14px;
+}
+
+.sidebar a{
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 16px 18px;
+
+    color: white;
+    text-decoration: none;
+
+    border-radius: 14px;
+
+    font-size: 17px;
+    font-weight: 500;
+
+    transition: 0.2s;
+}
+
+.sidebar a:hover{
+    background: rgba(255,255,255,0.12);
+}
+
+/* CONTENT */
+.content{
+    margin-left: 300px;
+    flex: 1;
+}
+
+/* WELCOME */
+.welcome{
+  text-align:center;
+  color:#2C3E50;
+  margin-bottom:40px;
+}
+
+/* CARDS */
+.cards{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  margin-bottom:60px;
+}
+
+.card{
+  background:#1A5276; /* primary blue */
+  color:white;
+  padding:30px;
+  border-radius:15px;
+  width:260px;
+  text-align:center;
+}
+
+.card h3{
+  margin-bottom:20px;
+}
+
+.number{
+  font-size:30px;
+  font-weight:bold;
+}
+
+/* CHART */
+.chart-box{
+  background:#ffffff; /* light gray */
+  padding:25px;
+  width:80%;
+  margin:40px auto;
+  border-radius:12px;
+  height:320px;
+}
+
+.chart-box canvas{
+  width:100% !important;
+  height:230px !important;
+}
+
+html, body{
+    height: auto;
+    overflow-y: auto;
+}
+
+.main{
+    align-items: flex-start;
+
+    gap: 40px;
+
+    padding: 20px;
+}

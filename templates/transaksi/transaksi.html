@@ -1,0 +1,69 @@
+{% extends "layout/base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transaksi.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="transaksi-container">
+
+  <div class="transaksi-left">
+
+    <div class="scan-area">
+      <input type="text" id="scanInput" placeholder="Cari barang atau pindai barcode"
+             oninput="autoCompleteBarang()" onkeydown="handleKey(event)" autocomplete="off" autofocus>
+      <div class="scan-buttons">
+        <button onclick="startScanner()" class="btn-scan">📷 Scan</button>
+        <button onclick="stopScanner()" class="btn-stop">⛔ Stop</button>
+      </div>
+      <div id="suggestionBox" class="suggestion-box"></div>
+    </div>
+
+    <div id="reader" style="width:300px; margin-top:20px;"></div>
+
+    <table class="table-transaksi">
+      <thead>
+        <tr>
+          <th>Barang</th>
+          <th>Harga</th>
+          <th>Qty</th>
+          <th>Subtotal</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="keranjang"></tbody>
+    </table>
+
+  </div>
+
+  <div class="transaksi-right">
+    <h3><i class="fa fa-wallet"></i> PEMBAYARAN</h3>
+    <div class="total-box">
+      Total Belanja
+      <h2 id="totalBelanja">Rp 0</h2>
+    </div>
+    <div class="metode">
+      <h4>METODE PEMBAYARAN</h4>
+      <label><input type="radio" name="metode" checked> Tunai</label>
+      <label><input type="radio" name="metode"> QRIS</label>
+    </div>
+    <input id="inputBayar" class="bayar-input" type="number" placeholder="Bayar">
+    <div class="kembalian">
+      <div>Kembalian</div>
+      <div id="kembalian">Rp 0</div>
+    </div>
+    <button onclick="prosesBayar()" class="btn-bayar">Proses Bayar</button>
+  </div>
+
+</div>
+
+{% include "transaksi/struk.html" %}
+
+<div id="toast" class="toast"></div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="{{ url_for('static', filename='js/transaksi.js') }}"></script>
+
+{% endblock %}

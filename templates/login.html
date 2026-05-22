@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login - Kasir</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+<!-- icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+<h1>KASIR TOKO ANRESTA</h1>
+
+<div class="login-box">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div style="color: red;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<form method="POST" autocomplete="off">
+
+<div class="input-group">
+<label>Username</label>
+<div class="input-icon">
+<i class="fa fa-user"></i>
+<input type="text" name="username" required>
+</div>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<div class="input-icon">
+<i class="fa fa-lock"></i>
+<input type="password" name="password" required>
+</div>
+</div>
+
+<button type="submit">Login</button>
+
+</form>
+
+<input type="hidden" name="fakeuser">
+<input type="hidden" name="fakepass">
+
+</div>
+</div>
+
+</body>
+</html>

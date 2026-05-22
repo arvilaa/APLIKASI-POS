@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>POS Dashboard</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% block css %}{% endblock %}
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+<div class="nav-left">
+<i class="fa fa-home"></i>
+<span>Dashboard</span>
+</div>
+
+<div class="nav-right">
+<a href="{{ url_for('auth.logout') }}">
+    <i class="fa fa-sign-out-alt"></i> Keluar
+</a>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="sidebar">
+
+<a href="/dashboard"
+class="{% if request.path == '/dashboard' %}active{% endif %}">
+<i class="fa fa-home"></i> Dashboard
+</a>
+
+<a href="/transaksi"
+class="{% if request.path == '/transaksi' %}active{% endif %}">
+<i class="fa fa-credit-card"></i> Transaksi
+</a>
+
+<a href="/barang"
+class="{% if request.path == '/barang' %}active{% endif %}">
+<i class="fa fa-box"></i> Barang
+</a>
+
+<a href="/laporan"
+class="{% if request.path == '/laporan' %}active{% endif %}">
+<i class="fa fa-chart-bar"></i> Laporan
+</a>
+
+</div>
+
+<div class="content">
+
+{% block content %}{% endblock %}
+
+</div>
+
+</div>
+
+{% block js %}{% endblock %}
+
+</body>
+</html>

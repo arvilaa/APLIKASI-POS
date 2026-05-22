@@ -1,0 +1,136 @@
+{% extends "layout/base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/laporan.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="laporan-page">
+
+<h2>Laporan Pendapatan</h2>
+
+<form method="GET" class="filter">
+    <div class="filter-row">
+
+        <label>Periode</label>
+
+        <input type="date" name="start" id="startDate" value="{{ start or '' }}">
+        <span>s/d</span>
+        <input type="date" name="end" id="endDate" value="{{ end or '' }}">
+        <select name="metode" id="filterMetode" class="select-filter">
+            <option value="">Semua Metode</option>
+            <option value="tunai">Tunai</option>
+            <option value="qris">QRIS</option>
+        </select>
+        <button type="submit" class="btn-filter">Tampilkan</button>
+
+    </div>
+</form>
+
+<!-- CARD -->
+<div class="cards">
+
+    <div class="card">
+        <h4>Total Pendapatan</h4>
+        <p>Rp {{ "{:,}".format(total_pendapatan).replace(",", ".") }}</p>
+    </div>
+
+    <div class="card">
+        <h4>Total Transaksi</h4>
+        <p>{{ total_transaksi }}</p>
+    </div>
+
+    <div class="card">
+        <h4>Rata-rata / Transaksi</h4>
+        <p>Rp {{ "{:,}".format(rata_rata).replace(",", ".") }}</p>
+    </div>
+</div>
+
+<div class="chart-wrapper">
+
+    <div class="chart-box">
+        <h3>Pendapatan per Periode</h3>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+        <h3>Produk Terlaris</h3>
+        <canvas id="produkChart"></canvas>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+  <a href="#" id="exportExcel" class="btn-export">
+      Export ke Excel
+  </a>
+</div>
+
+<div class="filter-box">
+  <input 
+  type="text" 
+  id="searchInput" 
+  placeholder="Cari transaksi...."
+>
+</div>
+
+<table class="table-laporan">
+<thead>
+<tr>
+  <th class="col-tanggal">Tanggal</th>
+  <th class="col-trx">No. Trx</th>
+  <th class="col-metode">Metode</th>
+  <th class="col-total">Total</th>
+  <th class="col-kasir">Kasir</th>
+</tr>
+</thead>
+
+<tbody>
+{% for t in transaksi_list %}
+<tr data-bulan="{{ t.tanggal.strftime('%b') }}"
+    data-produk="{{ t.produk }}">
+  <td class="col-tanggal">{{ t.tanggal.strftime("%d-%m-%Y %H:%M") }}</td>
+  <td class="col-trx">{{ t.no_transaksi }}</td>
+  <td class="col-metode">{{ t.metode }}</td>
+  <td class="col-total">Rp {{ "{:,}".format(t.total).replace(",", ".") }}</td>
+  <td class="col-kasir">{{ t.kasir }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<script>
+  window.chartLabels = {{ chart_labels | tojson }};
+  window.chartValues = {{ chart_values | tojson }};
+
+  window.metodeLabels = {{ metode_labels | tojson }};
+  window.metodeValues = {{ metode_values | tojson }};
+
+  window.produkLabels = {{ produk_labels | tojson }};
+  window.produkValues = {{ produk_values | tojson }};
+</script>
+
+<script>
+document.getElementById("exportExcel").addEventListener("click", function(e) {
+    e.preventDefault();
+
+    const start = document.getElementById("startDate").value;
+    const end = document.getElementById("endDate").value;
+
+    let url = "{{ url_for('laporan.export_laporan') }}";
+
+    if (start && end) {
+        url += `?start=${start}&end=${end}`;
+    }
+
+    window.location.href = url;
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="{{ url_for('static', filename='js/laporan.js') }}"></script>
+
+</div>
+
+{% endblock %}

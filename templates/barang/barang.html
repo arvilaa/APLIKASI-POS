@@ -1,0 +1,421 @@
+{% extends "layout/base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/barang.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<h1 class="page-title">Barang</h1>
+
+<div class="barang-header">
+
+  <form id="searchForm" class="search-group">
+    <div class="search-wrapper">
+      <input 
+        name="keyword"
+        id="searchInput"
+        value="{{ keyword }}"
+        class="search-box"
+        placeholder="Cari nama / barcode..."
+      >
+      <div id="suggestions" class="suggestions-box"></div>
+    </div>
+
+    <button type="submit" id="searchBtn" class="btn-search">Cari</button>
+  </form>
+
+  <div class="header-actions">
+    <button id="checkExpiredBtn" class="btn-expired">⏰ Cek Kadaluarsa</button>
+    </button>
+    <button class="btn-tambah" onclick="openPopup()">➕ Tambah</button>
+  </div>
+
+</div>
+
+<div class="summary-cards">
+
+<div class="summary-card total">
+  <span>Total Barang</span>
+  <strong>{{ total_barang }}</strong>
+</div>
+
+<div class="summary-card habis">
+  <span>Barang Habis</span>
+  <strong id="barangHabisCount">{{ barang_habis }}</strong>
+</div>
+
+<div class="summary-card menipis">
+  <span>Stok Menipis</span>
+  <strong id="stokMenipisCount">{{ stok_menipis }}</strong>
+</div>
+
+<div class="summary-card restock">
+  <span>Perlu Isi Ulang</span>
+  <strong id="restockCount">{{ restock }}</strong>
+</div>
+
+<div class="summary-card expired">
+  <span>Mendekati Kadaluarsa</span>
+  <strong id="expiredCount">{{ expired_dekat }}</strong>
+</div>
+</div>
+
+<div class="filter-buttons">
+
+  <a data-filter="all"
+     href="{{ url_for('barang.barang', filter='all', keyword=keyword) }}" 
+     class="filter-btn {{ 'active' if filter_type=='all' else '' }}">
+     Semua
+  </a>
+
+  <a data-filter="habis"
+   href="{{ url_for('barang.barang', filter='habis', keyword=keyword) }}" 
+   class="filter-btn {{ 'active' if filter_type=='habis' else '' }}">
+   Barang Habis
+</a>
+
+  <a data-filter="menipis"
+     href="{{ url_for('barang.barang', filter='menipis', keyword=keyword) }}" 
+     class="filter-btn {{ 'active' if filter_type=='menipis' else '' }}">
+     Menipis
+  </a>
+
+  <a data-filter="restock"
+     href="{{ url_for('barang.barang', filter='restock', keyword=keyword) }}" 
+     class="filter-btn {{ 'active' if filter_type=='restock' else '' }}">
+     Perlu Isi Ulang
+  </a>
+
+  <a data-filter="expired"
+     href="{{ url_for('barang.barang', filter='expired', keyword=keyword) }}" 
+     class="filter-btn {{ 'active' if filter_type=='expired' else '' }}">
+     Mendekati Kadaluarsa
+  </a>
+
+</div>
+<div class="table-container">
+
+  <div class="table-header">
+    <h3>Daftar Barang</h3>
+  </div>
+
+  <div class="table-scroll">
+    <table class="table-barang">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th class="sortable">Nama ⇅</th>
+          <th class="sortable">Harga ⇅</th>
+          <th class="sortable">Stok ⇅</th>
+          <th class="expired-col" style="display:none;">Status Expired</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+{% for b in barang.items %}
+
+<tr>
+
+  <td>{{ b.barcode }}</td>
+
+  <td>{{ b.nama }}</td>
+
+  <td class="harga-cell" data-harga="{{ b.harga }}">
+    Rp {{ b.harga }}
+  </td>
+
+  <td>
+
+    {% if b.stok == 0 %}
+
+      <span class="stok-badge stok-habis">
+        Habis
+      </span>
+
+    {% elif b.stok <= 5 %}
+
+      <span class="stok-badge stok-menipis">
+        {{ b.stok }} tersisa
+      </span>
+
+    {% elif b.stok <= 10 %}
+
+      <span class="stok-badge stok-restock">
+        {{ b.stok }} restock
+      </span>
+
+    {% else %}
+
+      <span class="stok-badge stok-aman">
+        {{ b.stok }}
+      </span>
+
+    {% endif %}
+
+  </td>
+
+  <td
+    class="expired-badge expired-col"
+    data-expired-date="{{ b.expired_display }}"
+    style="display:none;"
+  ></td>
+
+  <td>
+
+    <div class="action-buttons">
+
+      <button
+        type="button"
+        class="btn-edit"
+        data-id="{{ b.id }}"
+        data-barcode="{{ b.barcode }}"
+        data-nama="{{ b.nama }}"
+        data-harga="{{ b.harga }}"
+        data-stok="{{ b.stok }}"
+      >
+        Ubah
+      </button>
+
+      <button
+        type="button"
+        class="btn-tambah-stok"
+        onclick="openBatchPopup({{ b.id }}, '{{ b.nama }}')"
+      >
+        + Stok
+      </button>
+
+      <button
+        type="button"
+        class="btn-batch"
+        onclick="openDetailBatch({{ b.id }})"
+      >
+        Batch
+      </button>
+
+      <a
+        href="/barang/hapus/{{ b.id }}"
+        class="btn-hapus btn-delete"
+      >
+        Hapus
+      </a>
+
+    </div>
+
+  </td>
+
+</tr>
+
+{% endfor %}
+
+    </table>
+  </div>
+
+</div>
+
+<div class="pagination">
+  
+  {% if barang.has_prev %}
+     <a href="{{ url_for('barang.barang', page=barang.prev_num, keyword=keyword) }}">← Prev</a>
+  {% endif %}
+
+  {% for p in range(1, barang.pages + 1) %}
+    <a href="{{ url_for('barang.barang', page=p, keyword=keyword) }}"
+       class="{{ 'active' if p == barang.page else '' }}">
+       {{ p }}
+    </a>
+  {% endfor %}
+
+  {% if barang.has_next %}
+    {% if barang.has_next %}
+  <a href="{{ url_for('barang.barang', page=barang.next_num, keyword=keyword) }}">Next →</a>
+{% endif %}
+  {% endif %}
+
+</div>
+
+<!-- POPUP TAMBAH -->
+<div class="popup" id="popupForm">
+
+<div class="popup-content">
+
+<span class="close-btn" onclick="closePopup()">×</span>
+
+<h3>Tambah Barang</h3>
+
+<form method="POST" action="/barang/tambah">
+
+<input name="barcode" id="barcode" placeholder="Barcode">
+
+<div class="scan-box">
+<button type="button" onclick="startScanner()">📷 Scan</button>
+<button type="button" onclick="stopScanner()">⛔ Stop</button>
+</div>
+
+<div id="reader"></div>
+
+<input name="nama" id="nama" placeholder="Nama Barang" required>
+<input name="harga" id="harga" placeholder="Harga" type="number" min="0" required>
+
+<button type="submit">Simpan</button>
+
+</form>
+
+</div>
+</div>
+
+
+<!-- POPUP EDIT -->
+<div class="popup" id="editPopup">
+
+<div class="popup-content">
+
+<span class="close-btn" onclick="closeEditPopup()">×</span>
+
+<h3>Ubah Barang</h3>
+
+<form method="POST" action="/barang/update">
+    <input type="hidden" name="id" id="edit_id">
+    <input name="barcode" id="edit_barcode" placeholder="Barcode">
+    <input name="nama" id="edit_nama" placeholder="Nama Barang">
+    <input name="harga" id="edit_harga" placeholder="Harga">
+    <button type="submit" class="btn-simpan">Update</button>
+</form>
+
+</div>
+
+</div>
+
+<!-- POPUP BATCH -->
+
+<!-- POPUP EDIT BATCH -->
+<div id="editBatchPopup" class="popup">
+
+    <div class="popup-content">
+
+        <span
+            class="close-btn"
+            onclick="document.getElementById('editBatchPopup').classList.remove('show')"
+        >
+            &times;
+        </span>
+
+        <h2>Edit Batch</h2>
+
+        <form
+            method="POST"
+            action="/batch/update"
+        >
+
+            <input
+                type="hidden"
+                name="batch_id"
+                id="edit_batch_id"
+            >
+
+            <div class="form-group">
+                <label>Stok</label>
+
+                <input
+                    type="number"
+                    name="stok"
+                    id="edit_batch_stok"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Expired Date</label>
+
+                <input
+                    type="date"
+                    name="expired_date"
+                    id="edit_batch_expired"
+                >
+            </div>
+
+            <button type="submit">
+                Simpan
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="popup" id="batchPopup">
+
+  <div class="popup-content">
+
+    <span class="close-btn" onclick="closeBatchPopup()">×</span>
+
+    <h3 id="batchTitle">Tambah Stok</h3>
+
+    <form method="POST" action="/batch/tambah">
+
+      <input
+        type="hidden"
+        name="barang_id"
+        id="batch_barang_id"
+      >
+
+      <input
+        type="number"
+        name="stok"
+        placeholder="Jumlah Stok"
+        required
+      >
+
+      <input
+        type="date"
+        name="expired_date"
+      >
+
+      <button type="submit">
+        Simpan
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+<!-- POPUP DETAIL BATCH -->
+<div class="popup" id="detailBatchPopup">
+
+  <div class="popup-content">
+
+    <span class="close-btn" onclick="closeDetailBatch()">×</span>
+
+    <h3>Daftar Batch</h3>
+
+    <div class="batch-scroll">
+    <div id="batchListContainer"></div>
+</div>
+
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="{{ url_for('static', filename='js/barang.js') }}?v=777777"></script>
+
+<div id="toast" class="toast"></div>
+
+{% endblock %}

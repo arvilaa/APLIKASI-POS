@@ -1,0 +1,28 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<h2>Reminder Barang Mendekati Expired</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nama Barang</th>
+            <th>Tanggal Expired</th>
+            <th>Reminder</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in reminder_items %}
+        <tr>
+            <td>{{ item.nama }}</td>
+            <td>{{ item.expired_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ item.periode }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">Tidak ada barang mendekati expired</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
