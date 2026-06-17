@@ -37,6 +37,8 @@ let lastScanTime = 0;
 
 function prosesScanBarcode(kode) {
   kode = kode.trim();
+
+
   if (kode === "") return;
 
   const now = Date.now();
@@ -52,6 +54,7 @@ function prosesScanBarcode(kode) {
   searchBarang(kode);
   document.getElementById("scanInput").value = "";
   document.getElementById("suggestionBox").innerHTML = "";
+  document.getElementById("scanInput").blur();
 }
 
 function autoCompleteBarang() {
@@ -60,7 +63,7 @@ function autoCompleteBarang() {
 
   clearTimeout(scanTimer);
 
-  // kalau angka panjang, anggap barcode dan langsung proses
+  // barcode -> langsung proses
   if (/^[0-9A-Za-z]{6,}$/.test(keyword)) {
     scanTimer = setTimeout(() => {
       prosesScanBarcode(keyword);
@@ -68,7 +71,7 @@ function autoCompleteBarang() {
     return;
   }
 
-  // selain angka panjang, baru autocomplete nama barang
+  // pencarian nama barang
   if (keyword.length < 2) {
     document.getElementById("suggestionBox").innerHTML = "";
     return;
@@ -84,25 +87,23 @@ function autoCompleteBarang() {
       data.data.forEach((barang) => {
         let div = document.createElement("div");
         div.className = "suggestion-item";
+
         div.innerHTML = `
-  ${barang.nama} - ${rupiah(barang.harga)}
-  <span class="stok-info">
-    (${barang.stok > 0 ? 'Stok: ' + barang.stok : 'Habis'})
-  </span>
-`;
+          ${barang.nama} - ${rupiah(barang.harga)}
+          <span class="stok-info">
+            (${barang.stok > 0 ? 'Stok: ' + barang.stok : 'Habis'})
+          </span>
+        `;
 
         div.onclick = function () {
-
-        searchBarang(barang.barcode);
-
-        box.innerHTML = "";
-        input.value = "";
-      };
+          searchBarang(barang.barcode);
+          box.innerHTML = "";
+          input.value = "";
+        };
 
         box.appendChild(div);
       });
     });
-
 }
 
 // ===============================
@@ -222,6 +223,9 @@ function searchBarang(kode) {
 
     tambahKeTabel(data.barang);
 
+    document.getElementById("suggestionBox").innerHTML = "";
+    document.getElementById("scanInput").value = "";
+
 } else {
 
     showToast(
@@ -245,6 +249,7 @@ function tambahKeTabel(barang) {
   if(barang.stok <= 0){
   showToast("Stok barang habis!", "error");
   return;
+  document.getElementById("suggestionBox").innerHTML = "";
 }
 
   let table = document.getElementById("keranjang");
@@ -304,7 +309,8 @@ let qty = qtySekarang + 1;
   }
 
   updateTotal();
-  document.getElementById("scanInput").focus();
+  document.getElementById("scanInput").value = "";
+  document.getElementById("suggestionBox").innerHTML = "";
 
 }
 
@@ -424,6 +430,8 @@ function startScanner() {
     { fps: 10, qrbox: 250 },
 
     (decodedText) => {
+
+      console.log("SCAN BERHASIL:", decodedText);
 
       document.getElementById("scanInput").value = decodedText;
 
@@ -687,10 +695,23 @@ window.prosesBayar = prosesBayar;
 window.cetakStruk = cetakStruk;
 window.closeStruk = closeStruk;
 
+
+document.getElementById("scanInput").addEventListener("input", function() {
+    console.log("INPUT:", this.value);
+});
+
 let barcodeBuffer = "";
 let barcodeTimer = null;
 
 document.addEventListener("keydown", function(event) {
+
+   console.log(
+    "KEY:",
+    event.key,
+    "TARGET:",
+    document.activeElement.id
+  );
+
   const active = document.activeElement;
 
   // Kalau sedang isi nominal bayar, jangan ganggu

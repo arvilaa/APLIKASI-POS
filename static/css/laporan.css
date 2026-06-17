@@ -217,3 +217,26 @@
 .chart-box {
     padding: 28px 32px;
 }
+
+.pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+
+.pagination a{
+    padding:8px 14px;
+    background:#f1f1f1;
+    border-radius:8px;
+    text-decoration:none;
+    color:#333;
+    font-weight:600;
+}
+
+.pagination a.active{
+    background:#1A5276;
+    color:white;
+}

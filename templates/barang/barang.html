@@ -166,15 +166,22 @@
         {{ b.stok }}
       </span>
 
-    {% endif %}
+   {% endif %}
 
-  </td>
+{% if b.expired_count > 0 %}
 
-  <td
-    class="expired-badge expired-col"
-    data-expired-date="{{ b.expired_display }}"
-    style="display:none;"
-  ></td>
+  <div class="expired-warning-text">
+      ⚠ {{ b.expired_count }} batch kadaluarsa
+  </div>
+
+{% endif %}
+
+</td>
+<td
+  class="expired-badge expired-col"
+  data-expired-date="{{ b.expired_raw }}"
+  style="display:none;"
+></td>
 
   <td>
 

@@ -124,6 +124,7 @@ def barang():
 
     keyword = request.args.get("keyword", "")
     filter_type = request.args.get("filter", "all")
+    page = request.args.get("page", 1, type=int)
 
     query = Barang.query
 
@@ -134,93 +135,128 @@ def barang():
             (Barang.barcode.ilike(f"%{keyword}%"))
         )
 
-    barang = query.all()
+    # ======================
+    # STATISTIK GLOBAL
+    # ======================
 
+    total_barang = query.count()
+
+    barang_habis = query.filter(
+        Barang.stok <= 0
+    ).count()
+
+    stok_menipis = query.filter(
+        Barang.stok > 0,
+        Barang.stok <= 5
+    ).count()
+
+    restock = query.filter(
+        Barang.stok > 5,
+        Barang.stok <= 10
+    ).count()
+
+    today = date.today()
+    limit = today + timedelta(days=30)
+
+    expired_barang_ids = db.session.query(
+        BatchBarang.barang_id
+    ).filter(
+        BatchBarang.expired_date != None,
+        BatchBarang.expired_date <= limit,
+        BatchBarang.expired_date >= today,
+        BatchBarang.stok > 0
+    ).distinct()
+
+    expired_dekat = expired_barang_ids.count()
+
+    # ======================
+    # FILTER TABEL
+    # ======================
+
+    if filter_type == "habis":
+
+        query = query.filter(
+            Barang.stok <= 0
+        )
+
+    elif filter_type == "menipis":
+
+        query = query.filter(
+            Barang.stok > 0,
+            Barang.stok <= 5
+        )
+
+    elif filter_type == "restock":
+
+        query = query.filter(
+            Barang.stok > 5,
+            Barang.stok <= 10
+        )
+
+    elif filter_type == "expired":
+
+        query = query.filter(
+            Barang.id.in_(expired_barang_ids)
+        )
+
+    # ======================
+    # PAGINATION
+    # ======================
+
+    pagination = query.order_by(
+    func.lower(Barang.nama).asc()
+    ).paginate(
+        page=page,
+        per_page=15,
+        error_out=False
+    )
+
+    barang = pagination.items
+
+    # ======================
     # EXPIRED DISPLAY
+    # ======================
+
     for b in barang:
 
         expired_terdekat = BatchBarang.query.filter(
             BatchBarang.barang_id == b.id,
             BatchBarang.expired_date != None,
+            BatchBarang.expired_date >= today,
             BatchBarang.stok > 0
         ).order_by(
             BatchBarang.expired_date.asc()
         ).first()
 
+        expired_count = BatchBarang.query.filter(
+            BatchBarang.barang_id == b.id,
+            BatchBarang.expired_date != None,
+            BatchBarang.expired_date < today,
+            BatchBarang.stok > 0
+        ).count()
+
+        b.expired_count = expired_count
+
         if expired_terdekat:
+
             b.expired_display = expired_terdekat.expired_date.strftime(
                 "%d-%m-%Y"
             )
+
+            b.expired_raw = expired_terdekat.expired_date.strftime(
+                "%Y-%m-%d"
+            )
+
         else:
+
             b.expired_display = "-"
-
-    # FILTER
-    filtered_barang = []
-
-    for b in barang:
-
-        if filter_type == "habis":
-
-            if b.stok <= 0:
-                filtered_barang.append(b)
-
-        elif filter_type == "menipis":
-
-            if 0 < b.stok <= 5:
-                filtered_barang.append(b)
-
-        elif filter_type == "restock":
-
-            if 5 < b.stok <= 10:
-                filtered_barang.append(b)
-
-        elif filter_type == "expired":
-
-            if b.expired_display != "-":
-                filtered_barang.append(b)
-
-        else:
-
-            filtered_barang.append(b)
-
-    # STATISTIK
-    barang_habis = len([
-        b for b in barang
-        if b.stok <= 0
-    ])
-
-    stok_menipis = len([
-        b for b in barang
-        if 0 < b.stok <= 5
-    ])
-
-    restock = len([
-        b for b in barang
-        if 5 < b.stok <= 10
-    ])
-
-    expired_dekat = len([
-        b for b in barang
-        if b.expired_display != "-"
-    ])
-
-    total_barang = len(barang)
-
-    # PAGINATION PALSU
-    class PaginationMock:
-
-        def __init__(self, items):
-            self.items = items
-            self.page = 1
-            self.pages = 1
-            self.has_prev = False
-            self.has_next = False
-
-    barang_paginated = PaginationMock(filtered_barang)
+            b.expired_raw = ""
 
     return render_template(
         "barang/barang.html",
-        barang=barang_paginated,
+        page_title="Barang",
+        page_icon="fa fa-box",
+        barang=pagination,
         keyword=keyword,
         filter_type=filter_type,
         total_barang=total_barang,
@@ -305,12 +341,23 @@ def hapus_barang(id):
 
     barang = Barang.query.get(id)
 
+    if not barang:
+        flash("Barang tidak ditemukan", "danger")
+        return redirect("/barang")
+
+    # HAPUS SEMUA BATCH
+    BatchBarang.query.filter_by(
+        barang_id=id
+    ).delete()
+
+    # HAPUS BARANG
     db.session.delete(barang)
+
     db.session.commit()
 
     flash("Barang berhasil dihapus", "danger")
-    return redirect("/barang")
 
+    return redirect("/barang")
 @barang_bp.route("/barang/update", methods=["POST"])
 @login_required
 def barang_update():
@@ -441,8 +488,11 @@ def search_barang():
 @login_required
 def api_batch(barang_id):
 
-    batch_list = BatchBarang.query.filter_by(
-        barang_id=barang_id
+    batch_list = BatchBarang.query.filter(
+    BatchBarang.barang_id == barang_id,
+    BatchBarang.stok > 0
+    ).order_by(
+    BatchBarang.expired_date.asc()
     ).all()
 
     data = []

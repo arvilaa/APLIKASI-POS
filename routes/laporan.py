@@ -47,7 +47,17 @@ def laporan():
             Transaksi.tanggal < end_dt
         )
 
-    transaksi = query.order_by(Transaksi.tanggal.desc()).all()
+    page = request.args.get("page", 1, type=int)
+
+    pagination = query.order_by(
+        Transaksi.tanggal.desc()
+    ).paginate(
+        page=page,
+        per_page=10,
+        error_out=False
+    )
+
+    transaksi = pagination.items
 
     # TOTAL
     total_pendapatan = sum(t.total for t in transaksi) if transaksi else 0
@@ -166,6 +176,8 @@ def laporan():
             
     return render_template(
         "laporan/laporan.html",
+        page_title="Laporan",
+        page_icon="fa fa-chart-bar",
         transaksi=transaksi,
         total_pendapatan=total_pendapatan,
         rata_rata=rata_rata,
@@ -180,7 +192,8 @@ def laporan():
         metode_labels=list(metode_data.keys()),
         metode_values=list(metode_data.values()),
         start=start,
-        end=end
+        end=end,
+        pagination=pagination,
     )
     
 @laporan_bp.route("/laporan/export")

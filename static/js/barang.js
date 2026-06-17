@@ -102,11 +102,41 @@ checkBtn.addEventListener("click", function() {
         if (expiredVisible) {
             let label = "";
             let colorClass = "";
-            if (diffDays <= 7) { label="1 minggu lagi"; colorClass="expired-red"; }
-            else if (diffDays <= 14) { label="2 minggu"; colorClass="expired-orange"; }
-            else if (diffDays <= 30) { label="1 bulan"; colorClass="expired-yellow"; }
-            else if (diffDays <= 60) { label="2 bulan"; colorClass="expired-lightblue"; }
-            else if (diffDays <= 90) { label="3 bulan"; colorClass="expired-green"; }
+            if (diffDays < 0) {
+
+    label = "Sudah Kadaluarsa";
+    colorClass = "expired-black";
+
+}
+else if (diffDays <= 7) {
+
+    label = "1 minggu lagi";
+    colorClass = "expired-red";
+
+}
+else if (diffDays <= 14) {
+
+    label = "2 minggu";
+    colorClass = "expired-orange";
+
+}
+else if (diffDays <= 30) {
+
+    label = "1 bulan";
+    colorClass = "expired-yellow";
+
+}
+else if (diffDays <= 60) {
+
+    label = "2 bulan";
+    colorClass = "expired-lightblue";
+
+}
+else if (diffDays <= 90) {
+
+    label = "3 bulan";
+    colorClass = "expired-green";
+}
 
             td.innerHTML = label ? `<span class="${colorClass}">${label}</span>` : "";
         } else {

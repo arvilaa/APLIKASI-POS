@@ -18,8 +18,11 @@ transaksi_bp = Blueprint('transaksi', __name__)
 @transaksi_bp.route("/transaksi")
 @login_required
 def transaksi():
-    return render_template("transaksi/transaksi.html")
-
+    return render_template(
+        "transaksi/transaksi.html",
+        page_title="Transaksi",
+        page_icon="fa fa-credit-card",
+    )
 
 @transaksi_bp.route("/api/transaksi", methods=["POST"])
 @login_required
