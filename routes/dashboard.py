@@ -11,11 +11,30 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @login_required
 def dashboard():
 
-    # TOTAL TRANSAKSI
-    total_transaksi = Transaksi.query.count()
+    # HARI INI
+    today = datetime.now()
 
-    # TOTAL PENDAPATAN
-    total_pendapatan = db.session.query(func.sum(Transaksi.total)).scalar() or 0
+    start_today = datetime(
+        today.year,
+        today.month,
+        today.day
+    )
+
+    end_today = start_today + timedelta(days=1)
+
+    # TOTAL TRANSAKSI HARI INI
+    total_transaksi = Transaksi.query.filter(
+        Transaksi.tanggal >= start_today,
+        Transaksi.tanggal < end_today
+    ).count()
+
+    # TOTAL PENDAPATAN HARI INI
+    total_pendapatan = db.session.query(
+        func.sum(Transaksi.total)
+    ).filter(
+        Transaksi.tanggal >= start_today,
+        Transaksi.tanggal < end_today
+    ).scalar() or 0
 
     # 7 HARI TERAKHIR
     today = datetime.now()
@@ -40,6 +59,8 @@ def dashboard():
 
     return render_template(
         "dashboard/dashboard.html",
+        page_title="Dashboard",
+        page_icon="fa fa-home",
         total_transaksi=total_transaksi,
         total_pendapatan=total_pendapatan,
         chart_labels=labels,
